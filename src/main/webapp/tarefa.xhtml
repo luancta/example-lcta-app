@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/template/templatetarefa.xhtml">
+
+
+	<ui:define name="titulo">
+		Gerenciamento de Tarefas
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:tabView binding="#{tarefaController.tabView}">
+			<p:tab title="Cadastro">
+				<h:form id="formulario">
+					<h:inputHidden value="#{tarefaController.tarefa.id}" />
+					<p:panelGrid columns="2"
+								 style="width:80%">
+						<p:outputLabel value="Titulo:" for="titulo"/>
+						<p:inputText id="titulo" value="#{tarefaController.tarefa.titulo}"
+							required="true"
+							style="width:95%"
+							validatorMessage="Nome deve ter no máximo 30 caracteres">
+							<f:validateLength maximum="30" />
+						</p:inputText>
+				
+						<p:outputLabel value="Descrição:" for="descricao"/>
+						<p:inputTextarea id="descricao" 
+								validatorMessage="Descrição deve ter no máximo 80 caracteres"
+								value="#{tarefaController.tarefa.descricao}" required="true"
+								rows="5" style="width:95%" maxlength="150"
+                         		counterTemplate="{0} Caracteres Restantes." autoResize="false">
+                        <f:validateLength maximum="150" />
+                		</p:inputTextarea>
+		         	 </p:panelGrid>
+		          	 <p:panelGrid columns="4"
+		          	 			  style="width:80%; align: left" > 
+		                <p:outputLabel value="Responsável:" for="responsaveis" />
+						<p:selectOneMenu id="responsaveis" value="#{tarefaController.responsavelSelecionado}" 
+											converter="#{responsavelConverter}">
+							<f:selectItem noSelectionOption="true"  itemValue="" itemLabel="--Selecione--"/>
+							<f:selectItems value="#{tarefaController.responsaveis}" var="resp"
+								itemLabel="#{resp.nome}" itemValue="#{resp}"/>
+						</p:selectOneMenu>
+					    <p:outputLabel value="Prioridade:" for="prioridade" />
+						<p:selectOneMenu id="prioridade" value="#{tarefaController.prioridadeSelecionada}" 
+											 converter="#{prioridadeConverter}">
+							<f:selectItem noSelectionOption="true"  itemValue="" itemLabel="--Selecione--"/>
+							<f:selectItems value="#{tarefaController.prioridades}" var="prior"
+										 itemLabel="#{prior.nome}" itemValue = "#{prior}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:panelGrid columns="2"
+								 style="width:80%">
+						<p:outputLabel value="Deadline:" for="deadline" />
+						<p:calendar id="deadline" style="align:left"
+							validatorMessage="A data deve ser diferente zero"
+							value="#{tarefaController.tarefa.deadline}" required="true">
+							<f:validateRequired />
+						</p:calendar>
+					</p:panelGrid>
+					<p:commandButton value="Salvar" onclick="submit()"
+						action="#{tarefaController.salvar}" ajax="false"
+						icon="ui-icon-disk" />
+					<br />
+					<br />
+				</h:form>
+
+				<h:form id="list">
+					<p:dataTable id="tabConsuta"
+						value="#{tarefaController.listaCompleta}" var="tarefa">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Titulo" />
+							</f:facet>
+							<h:outputText value="#{tarefa.titulo}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descrição" />
+							</f:facet>
+							<h:outputText value="#{tarefa.descricao}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Responsável" />
+							</f:facet>
+							<h:outputText value="#{tarefa.responsavel.nome}">
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Prioridade" />
+							</f:facet>
+							<h:outputText value="#{tarefa.prioridade.nome}">
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Deadline" />
+							</f:facet>
+							<h:outputText value="#{tarefa.deadline}">
+								<f:convertDateTime pattern="dd-MM-yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Editar" />
+							</f:facet>
+							<p:commandButton
+								action="#{tarefaController.selecionar(tarefa)}"
+								icon="ui-icon-zoomin" ajax="false" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Deletar" />
+							</f:facet>
+							<p:commandButton action="#{tarefaController.deletar(tarefa)}"
+								icon="ui-icon-trash" ajax="false" />
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+
+
+		</p:tabView>
+	</ui:define>
+
+</ui:composition>
